@@ -1,9 +1,8 @@
 import { Flex } from '@chakra-ui/react';
-import type { NextPage } from 'next';
+import type { GetServerSidePropsContext, NextPage } from 'next';
+import { getSession } from 'next-auth/react';
 import Head from 'next/head';
-import Image from 'next/image';
 import Form from '../components/form';
-import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   return (
@@ -22,6 +21,26 @@ const Home: NextPage = () => {
       <Form />
     </Flex>
   );
+};
+
+//@ts-ignore
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession({ req: context.req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/profile',
+        permananet: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
 };
 
 export default Home;
